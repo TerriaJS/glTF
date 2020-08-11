@@ -63,13 +63,33 @@ Edge outlining is requested by adding the `CESIUM_primitive_outline` extension t
 
 The `indices` property specifies the ID of an accessor with the locations of the edges. The accessor must contain an even number of elements of `componentType` `UNSIGNED_SHORT` (5123) or `UNSIGNED_INT` (5125) representing vertex indices on the primitive containing this extension. Each pair of indices specifies the endpoint vertices of an edge to be highlighted. These two vertices must also be two of the three vertices of one or more triangles; otherwise, the line will not be drawn at all.
 
-If the `indices` property is not present, as seen here:
+Sometimes it is convenient for a renderer to infer which edges to outline, rather than specifying this ahead of time. The `outlineWhenAngleBetweenFaceNormalsExceeds` property indicates that outlines should be infered from the geometry of a primitive. The value of the property is an angle in radians. When the angle between the normals of two faces that share an edge is between `outlineWhenAngleBetweenFaceNormalsExceeds` and π radians (180 degrees), exclusive, that shared edge should be highlighted.
+
+```json
+"meshes": [
+    {
+        "primitives": [
+            {
+                "attributes": {
+                    "POSITION": 0,
+                    "NORMAL": 1,
+                    "_BATCHID": 2
+                },
+                "indices": 3,
+                "material": 0,
+                "mode": 4,
+                "extensions": {
+                    "CESIUM_primitive_outline": {
+                        "outlineWhenAngleBetweenFaceNormalsExceeds": 0.14
+                    }
+                }
+            }
+        ]
+    }
+]
 ```
-"extensions": {
-                    "CESIUM_primitive_outline": {}
-              }
-```
-Then the locations of the outlines will be infered from the geometry of the primitive itself.
+
+Because this requires additional calculations at runtime and therefore introduces a performance penalty, use of `indices` is preferred. If both an `indices` and an `outlineWhenAngleBetweenFaceNormalsExceeds` are present, the `outlineWhenAngleBetweenFaceNormalsExceeds` property will be ignored.
 
 ## Implementation Notes
 
