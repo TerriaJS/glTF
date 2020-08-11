@@ -63,6 +63,14 @@ Edge outlining is requested by adding the `CESIUM_primitive_outline` extension t
 
 The `indices` property specifies the ID of an accessor with the locations of the edges. The accessor must contain an even number of elements of `componentType` `UNSIGNED_SHORT` (5123) or `UNSIGNED_INT` (5125) representing vertex indices on the primitive containing this extension. Each pair of indices specifies the endpoint vertices of an edge to be highlighted. These two vertices must also be two of the three vertices of one or more triangles; otherwise, the line will not be drawn at all.
 
+If the `indices` property is not present, as seen here:
+```
+"extensions": {
+                    "CESIUM_primitive_outline": {}
+              }
+```
+Then the locations of the outlines will be infered from the geometry of the primitive itself.
+
 ## Implementation Notes
 
 This extension does not dictate any specific rendering technique; it only requires that the outlines be drawn and that they avoid depth fighting with the solid geometry. However, most implementations will find it convenient to use a single-pass approach that renders the outlines as part of the triangles. For example, [Fast and versatile texture-based wireframe rendering](https://www.researchgate.net/publication/220067637_Fast_and_versatile_texture-based_wireframe_rendering) describes a technique that uses a mipmapped 1D texture and three sets of 1D texture coordinates to render high-quality, anti-aliased lines on the edges of triangles. This is the approach used in CesiumJS.
